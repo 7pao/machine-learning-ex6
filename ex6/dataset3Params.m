@@ -22,6 +22,21 @@ sigma = 0.3;
 %  Note: You can compute the prediction error using 
 %        mean(double(predictions ~= yval))
 %
+testset = [0.01 0.03 0.1 0.3 1 3 10 30];
+C_test = testset;
+sigma_test = testset;
+err = ones(size(C_test,2),size(sigma_test,2));
+for i = 1:size(err,1)
+    for j = 1:size(err,2)
+        model = svmTrain(X, y, C_test(i), @(x1, x2) gaussianKernel(x1, x2, sigma_test(j)));
+        predictions = svmPredict(model, Xval);
+        err(i,j) = mean(double(predictions ~= yval));
+        if(err(i,j)==min(err(:)))
+            C = C_test(i);
+            sigma = sigma_test(j);
+        end
+    end
+end
 
 
 
